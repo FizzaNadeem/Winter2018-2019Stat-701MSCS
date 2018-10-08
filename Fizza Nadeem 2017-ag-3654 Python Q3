@@ -1,0 +1,91 @@
+
+
+from matplotlib import pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from statsmodels.formula.api import ols
+from statsmodels.stats.anova import anova_lm
+import numpy as np
+import pandas as pd
+from matplotlib import cm
+
+
+Angle = [120, 220, 120, 320, 220, 220, 320]
+Pixels = [ 400, 500, 500, 760, 645, 625, 806]
+PictureQuality = [100, 200, 300, 400, 500, 600, 700]
+
+
+DegreeF = pd.DataFrame(
+    {
+        "Angle": Angle
+        , "Pixels": Pixels
+        , "PictureQuality": PictureQuality
+    }
+)
+
+print(DegreeF)
+
+# This is the 1st Graph
+fg = plt.figure()
+ax = fg.add_subplot(111, projection="3d")
+ax.scatter(
+    DegreeF["Angle"]
+    , DegreeF["Pixels"]
+    , DegreeF["PictureQuality"]
+    , color="green"
+    , marker="o"
+    , alpha=1
+)
+ax.set_xlabel("Angle")
+ax.set_ylabel("Pixels")
+ax.set_zlabel("PictureQuality")
+
+plt.show()
+
+# This is the MLR
+Reg4 = ols(formula="PictureQuality ~ Angle + Pixels", data=DegreeF)
+Fit4 = Reg4.fit()
+print(Fit4.summary())
+print(Fit4.params)
+print(Fit4.fittedvalues)
+print(Fit4.resid)
+print(Fit4.bse)
+print(Fit4.centered_tss)
+print(anova_lm(Fit4))
+
+# This is the 2nd Graph
+fg = plt.figure()
+ax = fg.add_subplot(111, projection="3d")
+ax.scatter(
+    DegreeF["Angle"]
+    , DegreeF["Pixels"]
+    , DegreeF["PictureQuality"]
+    , color="red"
+    , marker="o"
+    , alpha=1
+)
+ax.set_xlabel("Angle")
+ax.set_ylabel("Pixels")
+ax.set_zlabel("PictureQuality")
+
+# This is for the Regression Surface
+x_surf = Angle #np.arange(110, 700, 40)
+y_surf = Pixels #np.arange(20, 30, 2)
+x_surf, y_surf = np.meshgrid(x_surf, y_surf)
+
+exog = pd.core.frame.DataFrame({
+    "Angle": x_surf.ravel()
+    , "Pixels": y_surf.ravel()
+})
+out = Fit4.predict(exog=exog)
+ax.plot_surface(
+    x_surf
+    , y_surf
+    , out.values.reshape(x_surf.shape)
+    , rstride=5
+    , cstride=5
+    , color="blue"
+    , alpha=0.5
+)
+plt.show()
+
+
