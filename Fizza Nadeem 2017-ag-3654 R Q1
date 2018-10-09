@@ -1,0 +1,87 @@
+
+rm(list=ls(all=TRUE))
+yield = c(40,50,50,70,65,65,80)
+fertilizer = c(100,200,300,400,500,600,700)
+rainfall= c(10,20,10,30,20,20,30)
+MLR.Exp = function(Y, X1, X2)
+{
+  sample.size = length(Y)
+  K =3
+  cat("length of variabes = ", sample.size, "\n")
+  a = mean(Y)
+  b = mean(X1)
+  c = mean(X2)
+  
+  cat("mean of Y = ", a , "\n")
+  cat("mean of X1 = ", b, "\n")
+  cat("mean of X2 = ", c, "\n","\n")
+  
+  fiz.sumy=sum(Y)	
+  fiz.sumX1=sum(X1)
+  fiz.sumx2=sum(X2)
+  fiz.sumX1X1=sum(X1*X1)
+  fiz.sumx2x2=sum(X2*X2)
+  fiz.sumX1x2=sum(X1*X2)
+  fiz.sumX1y=sum(X1*Y)
+  fiz.sumx2y=sum(X2*Y)
+  fiz.sumyy=sum(Y*Y)
+  
+  fiz.SX1X1=fiz.sumX1X1-(fiz.sumX1^2/sample.size)
+  fiz.Sx2x2=fiz.sumx2x2-(fiz.sumx2^2/sample.size)
+  fiz.SX1y=fiz.sumX1y-(fiz.sumX1*fiz.sumy/sample.size)
+  fiz.Sx2y=fiz.sumx2y-(fiz.sumx2*fiz.sumy/sample.size)
+  fiz.SX1x2=fiz.sumX1x2-(fiz.sumX1*fiz.sumx2/sample.size)
+  fiz.Syy=fiz.sumyy-(fiz.sumy^2/sample.size)
+  
+  
+  b1=(fiz.Sx2x2*fiz.SX1y-fiz.SX1x2*fiz.Sx2y)/(fiz.SX1X1*fiz.Sx2x2-fiz.SX1x2^2)
+  b2=(fiz.SX1X1*fiz.Sx2y-fiz.SX1x2*fiz.SX1y)/(fiz.SX1X1*fiz.Sx2x2-fiz.SX1x2^2)
+  b0=a-(b1*b)-(b2*c)
+  
+  Y.heat= b0+b1*X1+b2*X2
+  fiz.sumY.heat=sum(Y.heat)
+  fiz.TSS=sum((Y-a)^2)
+  fiz.MSS=sum((Y.heat-a)^2)
+  fiz.RSS=sum((Y-Y.heat)^2)
+  fiz.R2=fiz.RSS/fiz.TSS
+  fiz.sigma.heat2=fiz.RSS/(sample.size - K)
+  fiz.v.B1.hat=fiz.sigma.heat2*(fiz.Sx2x2/(fiz.SX1X1*fiz.Sx2x2-fiz.SX1x2^2))
+  fiz.v.B2.hat=fiz.sigma.heat2*(fiz.SX1X1/(fiz.SX1X1*fiz.Sx2x2-fiz.SX1x2^2))
+  fiz.v.B0.hat=fiz.sigma.heat2*((1/sample.size)+((b^2*fiz.Sx2x2+c^2*fiz.SX1X1-2*b*c*fiz.SX1x2)/(fiz.SX1X1*fiz.Sx2x2-fiz.SX1x2^2)))
+  
+  
+  
+  
+  
+  cat(" value of SX1X1 is ", fiz.SX1X1, "\n")
+  cat("Value of Sx2x2 is ", fiz.Sx2x2, "\n")
+  cat(" Value of SX1y is ", fiz.SX1y, "\n")
+  cat("Value of Sx2y is ", fiz.Sx2y, "\n")
+  cat(" Value of SX1x2 is", fiz.SX1x2, "\n")
+  cat(" Value of Syy is", fiz.Syy, "\n","\n")
+  
+  cat(" value of b0 = ", b0, "\n")
+  cat(" value of b1 = ", b1, "\n")
+  cat(" value of b2 = ", b2, "\n","\n")
+  
+  cat("Y = ", b0," + ",b1,"X1",b2,"X2", "\n")
+  cat("sum of all y c = ", fiz.sumY.heat, "\n","\n")
+  
+  cat("TSS = ", fiz.TSS, "\n")
+  cat("MSS = ", fiz.MSS, "\n")
+  cat("RSS = ", fiz.RSS, "\n")
+  cat("R2 = ", fiz.R2, "\n")
+  cat("sigma.heat2 = ", fiz.sigma.heat2, "\n")
+  cat("variance of B1.hat =",fiz.v.B1.hat,"\n")
+  cat("variance of B2.hat =",fiz.v.B2.hat,"\n")
+  cat("variance of B0.hat =",fiz.v.B0.hat,"\n")
+  
+}
+
+Exp.data = cbind(yield, fertilizer, rainfall)
+colnames(Exp.data) = c('yield', 'fertilizer', 'rainfall')
+Exp.data
+
+# let's conduct simple linear regression on data by calling our function
+Exp.regression <- MLR.Exp(yield, fertilizer, rainfall)
+Exp.regression
