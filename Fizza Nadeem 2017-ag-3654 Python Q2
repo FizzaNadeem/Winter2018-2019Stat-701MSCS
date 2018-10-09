@@ -1,0 +1,91 @@
+
+
+from matplotlib import pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+from statsmodels.formula.api import ols
+from statsmodels.stats.anova import anova_lm
+import numpy as np
+import pandas as pd
+from matplotlib import cm
+
+
+IndeX1 = [0, 0, 10,10, 20, 20]
+IndeX2 = [0, 0, 100, 100, 400, 400]
+DepY1 = [5, 7, 15, 17, 9, 11]
+
+
+DegreeF = pd.DataFrame(
+    {
+        "IndeX1": IndeX1
+        , "IndeX2": IndeX2
+        , "DepY1": DepY1
+    }
+)
+
+print(DegreeF)
+
+# This is the 1st Graph
+fg = plt.figure()
+ax = fg.add_subplot(111, projection="3d")
+ax.scatter(
+    DegreeF["IndeX1"]
+    , DegreeF["IndeX2"]
+    , DegreeF["DepY1"]
+    , color="green"
+    , marker="+"
+    , alpha=0.5
+)
+ax.set_xlabel("IndeX1")
+ax.set_ylabel("IndeX2")
+ax.set_zlabel("DepY1")
+
+plt.show()
+
+# This is the MLR
+Reg4 = ols(formula="DepY1 ~ IndeX1 + IndeX2", data=DegreeF)
+Fit4 = Reg4.fit()
+print(Fit4.summary())
+print(Fit4.params)
+print(Fit4.fittedvalues)
+print(Fit4.resid)
+print(Fit4.bse)
+print(Fit4.centered_tss)
+print(anova_lm(Fit4))
+
+# This is the 2nd Graph
+fg = plt.figure()
+ax = fg.add_subplot(111, projection="3d")
+ax.scatter(
+    DegreeF["IndeX1"]
+    , DegreeF["IndeX2"]
+    , DegreeF["DepY1"]
+    , color="red"
+    , marker="o"
+    , alpha=1
+)
+ax.set_xlabel("IndeX1")
+ax.set_ylabel("IndeX2")
+ax.set_zlabel("DepY1")
+
+# This is for the Regression Surface
+x_surf = IndeX1 #np.arange(110, 700, 40)
+y_surf = IndeX2 #np.arange(20, 30, 2)
+x_surf, y_surf = np.meshgrid(x_surf, y_surf)
+
+exog = pd.core.frame.DataFrame({
+    "IndeX1": x_surf.ravel()
+    , "IndeX2": y_surf.ravel()
+})
+out = Fit4.predict(exog=exog)
+ax.plot_surface(
+    x_surf
+    , y_surf
+    , out.values.reshape(x_surf.shape)
+    , rstride=5
+    , cstride=5
+    , color="blue"
+    , alpha=0.5
+)
+plt.show()
+
+
