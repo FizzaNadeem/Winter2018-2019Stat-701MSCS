@@ -1,0 +1,187 @@
+# clear all variables 
+rm(list=ls(all=TRUE))
+all.one=c(1,1,1,1,1,1,1)
+Income = c(20, 40, 60, 80, 100, 120, 140)
+Exp = c(50, 45, 70, 75, 80, 95, 105)
+SLR = function( X, Y)
+{
+  sum=0
+  A=0 
+  B=0
+  C=0
+  D=0
+  E=0
+  F=0
+  G=0
+  H=0
+  I=0
+  A0=0
+  A1=0
+  A2=0
+  #find hat array 
+  Yhat=array()
+  Y.Yhat=array()
+  Y.Yha1=array()
+  Y.Yha2=array()
+  z=0
+  c=0
+  RSS=0
+  TSS=0
+  sample.size = length(all.one)
+  size = length(X)
+  
+#Apply Loop
+  for(i in 1:sample.size)
+  {
+    z[i] = all.one[i]*all.one[i]
+    A=A+z[i]
+    
+  }
+  
+
+  for(j in 1:sample.size)
+  {
+    c[j] = all.one[j]*X[j]
+    B=B+c[j]
+    
+  }
+
+  
+  for(j in 1:sample.size)
+  {
+    c[j] = X[j]*all.one[j]
+    C=C+c[j]
+    
+  }
+
+  
+  for(k in 1:sample.size)
+  {
+    all.one[k] = X[k]*X[k]
+    D=D+all.one[k]
+    
+  }
+
+  adj.xbarx= cat( "\n",A,"\t","\t" , "-",B, "\n", "-",C,"\t",D)
+  xbarx= A*D-B*C
+
+  ex2=c(1,1,1,1,1,1,1,1,1,1)
+  for(k in 1:sample.size)
+  {
+    ex2[k] = ex2[k]*Y[k]
+    E=E+ex2[k]
+    
+  }
+  
+ 
+  
+  for(k in 1:sample.size)
+  {
+    all.one[k] = X[k]*Y[k]
+    F=F+all.one[k]
+    
+  }
+
+  G=D*E-B*F
+ 
+  H=-C*E+A*F
+
+  
+  cat("\n")
+  B0=cat("\n^B0 =",G/xbarx)
+  B1=cat("\n^B1 =",H/xbarx)
+  cat("\n")
+  
+ 
+  for(k in 1:size)
+  {
+    
+    X[k] =X[k]*H/xbarx
+    
+    Yhat[k]=X[k]+G/xbarx
+    cat("\nvalue of  Y ^",k,"=",Yhat[k])
+    
+  }
+  
+
+  cat("\n")
+  for(k in 1:size)
+  {
+    
+    Y.Yhat[k]=Y[k]-Yhat[k]
+    
+    
+    cat("\nvalue of Y-Y ^",k,"=",Y.Yhat[k])
+    
+  }
+  cat("\n")
+  
+  for(k in 1:size)
+  {
+    
+    Y.Yha1[k]=Y.Yhat[k]*Y.Yhat[k]
+    cat("\nmultiplication of (y-y ^)'(Y-Y ^) to find RSS =",Y.Yha1[k])
+    
+  }
+  cat("\n")
+  
+  for(k in 1:size)
+  {
+    
+    A1=A1+Y.Yha1[k]
+    
+  }
+  
+  # TSS=(Y- 1/n 1' Y)' (Y- 1/n 1' Y)
+  One.all=c(1,1,1,1,1,1,1,1,1,1)
+  for(k in 1:size)
+  {
+    
+    Y[k]=Y[k]*One.all[k]
+    cat("\n  Y and 1,s =",Y[k])
+    A2=A2+Y[k]
+    
+  }
+  cat("\n")
+  cat("\n sum of Y and 1,s =",A2)
+  cat("\n")
+  cat("\n",A2/size)
+  cat("\n")
+  for(k in 1:size)
+  {
+    
+    Y.Yha2[k]=Y[k]-A2/size
+    cat("\nvalue of (Y- 1/n 1' Y) =",Y.Yha2[k])
+    
+  }
+  cat("\n")
+  for(k in 1:size)
+  {
+    
+    Y.Yha2[k]=Y.Yha2[k]*Y.Yha2[k]
+    cat("\nmultiplication of (Y- 1/n 1' Y) and (Y- 1/n 1' Y)' = ",Y.Yha2[k])
+    TSS=TSS+Y.Yha2[k]
+    
+  }
+  cat("\n")
+  cat("\nvalue of TSS is  =",TSS)
+  SSE= TSS-A1
+  
+  cat("\nvalue of SSE is  =",SSE)
+  cat("\nvalue of SSR is  =",A1)
+  
+  
+  
+}
+
+
+
+
+
+Exp.data = cbind(Income, Exp)
+colnames(Exp.data) = c('Income', 'Expenditures')
+Exp.data
+
+#simple linear regression on data by calling our function
+Exp.regression <- SLR(Income, Exp)
+Exp.regression
